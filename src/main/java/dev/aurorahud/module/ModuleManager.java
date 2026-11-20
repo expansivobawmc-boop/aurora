@@ -61,8 +61,11 @@ public final class ModuleManager {
                 bb));
 
         MODULES.add(new OptimizerModule("Fast Graphics", "Switches to the Fast graphics mode.",
-                o -> { GraphicsMode old = o.getGraphicsMode().getValue(); return () -> o.getGraphicsMode().setValue(old); },
-                o -> o.getGraphicsMode().setValue(GraphicsMode.FAST)));
+        o -> {
+            GraphicsMode old = o.getPreset().getValue();
+            return () -> o.applyGraphicsMode(old);
+        },
+        o -> o.applyGraphicsMode(GraphicsMode.FAST)));
 
         MODULES.add(new OptimizerModule("Minimal Particles", "Reduces particles to the minimum.",
                 o -> { ParticlesMode old = o.getParticles().getValue(); return () -> o.getParticles().setValue(old); },
