@@ -1,11 +1,13 @@
 package dev.aurorahud;
 
 import dev.aurorahud.gui.ClickGuiScreen;
+import dev.aurorahud.modules.CrosshairModule;
 import dev.aurorahud.module.ModuleManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
@@ -30,6 +32,20 @@ public class AuroraHudClient implements ClientModInitializer {
             if (mc.player != null) ModuleManager.tick(mc);
         });
 
-        HudRenderCallback.EVENT.register((ctx, tick) -> ModuleManager.renderHud(ctx));
+        // Modulos de HUD e efeitos
+        HudElementRegistry.attachElementBefore(VanillaHudElements.CHAT,
+                Identifier.of("aurorahud", "modules"),
+                (ctx, tick) -> ModuleManager.renderHud(ctx));
+
+        // Mira customizada: substitui a mira original quando o modulo esta ligado
+        HudElementRegistry.replaceElement(VanillaHudElements.CROSSHAIR, original -> (ctx, tick) -> {
+            CrosshairModule c = ModuleManager.crosshair;
+            if (c != null && c.isEnabled()) {
+                if (!c.hidesVanilla()) original.render(ctx, tick);
+                c.draw(ctx);
+            } else {
+                original.render(ctx, tick);
+            }
+        });
     }
 }

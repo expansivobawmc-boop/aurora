@@ -2,37 +2,27 @@ package dev.aurorahud.modules;
 
 import dev.aurorahud.gui.HudStyle;
 import dev.aurorahud.module.Category;
+import dev.aurorahud.module.ColorSetting;
+import dev.aurorahud.module.ClickTracker;
 import dev.aurorahud.module.Module;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.List;
 
 public class CpsModule extends Module {
-    private final Deque<Long> left = new ArrayDeque<>();
-    private final Deque<Long> right = new ArrayDeque<>();
-    private boolean lastL, lastR;
+    private final ColorSetting accent = color("Accent color", 139, 124, 255);
 
     public CpsModule() {
-        super("CPS", "Mostra cliques por segundo.", Category.PVP, true);
+        super("CPS", "Shows your clicks per second.", Category.HUD, false);
+        hud = true;
     }
 
     @Override
     public void onHud(DrawContext ctx, MinecraftClient mc) {
-        long win = mc.getWindow().getHandle();
-        long now = System.currentTimeMillis();
-        boolean l = GLFW.glfwGetMouseButton(win, GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
-        boolean r = GLFW.glfwGetMouseButton(win, GLFW.GLFW_MOUSE_BUTTON_RIGHT) == GLFW.GLFW_PRESS;
-        if (l && !lastL) left.add(now);
-        if (r && !lastR) right.add(now);
-        lastL = l;
-        lastR = r;
-        while (!left.isEmpty() && now - left.peekFirst() > 1000) left.pollFirst();
-        while (!right.isEmpty() && now - right.peekFirst() > 1000) right.pollFirst();
-
-        HudStyle.panel(ctx, mc.textRenderer, 8, 70, List.of("CPS: " + left.size() + " | " + right.size()));
+        int x = 8 + offX, y = 70 + offY;
+        int[] sz = HudStyle.panel(ctx, mc.textRenderer, x, y,
+                List.of("CPS: " + ClickTracker.left() + " | " + ClickTracker.right()), accent.argb());
+        bounds(x, y, sz[0], sz[1]);
     }
 }

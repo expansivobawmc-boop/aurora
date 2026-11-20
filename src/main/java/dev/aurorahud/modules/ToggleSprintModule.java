@@ -6,7 +6,7 @@ import net.minecraft.client.MinecraftClient;
 
 public class ToggleSprintModule extends Module {
     public ToggleSprintModule() {
-        super("Toggle Sprint", "Corre automaticamente enquanto anda para frente.", Category.PLAYER, false);
+        super("Toggle Sprint", "Sprints automatically while moving forward.", Category.PLAYER, false);
     }
 
     @Override
