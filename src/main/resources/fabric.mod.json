@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "aurorahud",
+  "version": "${version}",
+  "name": "Aurora",
+  "description": "Client custom feito por expansivexx. Nao e o Aurora oficial.",
+  "authors": ["expansivexx"],
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.aurorahud.AuroraHudClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "~1.21.11",
+    "fabric-api": "*"
+  }
+}
